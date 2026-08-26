@@ -64,5 +64,18 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Rael is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Rael is a holistic personal-care brand founded in 2017 by three Korean-American women and led by
+co-founder and CEO Yanghee Paik, selling organic-cotton period care, intimate care, skincare and
+cycle supplements direct to consumers and through Target, Amazon, Walmart and Thrive Market.
+
+Rael runs no developer program and publishes no OpenAPI or SDK. It does serve two live, anonymous,
+machine-readable contracts from its own domain:
+
+- **UCP commerce MCP** — `https://www.getrael.com/api/ucp/mcp`, discovered via
+  `/.well-known/ucp` (Universal Commerce Protocol 2026-04-08) and documented by Rael's own
+  `/llms.txt` and `/agents.md`. An unauthenticated `tools/list` returns 13 catalog, cart, checkout
+  and order tools with full JSON Schema inputs.
+- **Shopify Storefront GraphQL** — `https://www.getrael.com/api/graphql`, fully introspectable
+  without a credential (422 types, 34 queries, 41 mutations) and resolving against Rael's own store.
+
+- https://www.getrael.com/

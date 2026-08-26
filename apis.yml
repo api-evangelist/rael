@@ -1,18 +1,83 @@
 aid: rael
 name: Rael
-description: 'Rael is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Rael is a holistic personal-care brand founded in 2017 by three Korean-American
+  women and led by co-founder and CEO Yanghee Paik, selling organic-cotton period care, intimate
+  care, skincare and cycle supplements direct to consumers at getrael.com and through Target,
+  Amazon, Walmart and Thrive Market. Rael runs no developer program, publishes no OpenAPI and ships
+  no SDK — but its storefront serves two live, anonymous, machine-readable contracts on its own
+  domain. The first is an agentic commerce surface Rael documents itself: a hand-written llms.txt
+  and agents.md, a Universal Commerce Protocol merchant profile at /.well-known/ucp declaring UCP
+  2026-04-08, and an MCP endpoint at /api/ucp/mcp that answers tools/list with thirteen catalog,
+  cart, checkout and order tools carrying full JSON Schema inputs and a required idempotency key on
+  checkout completion. The second is the Shopify Storefront GraphQL API at /api/graphql, fully
+  introspectable without a credential — 422 types, 34 queries and 41 mutations resolving against
+  Rael''s own catalog.'
+image: https://www.getrael.com/cdn/shop/files/Rael_Logo_Forest-Green.png?height=628&pad_color=fff&v=1682534336&width=1200
 url: https://raw.githubusercontent.com/api-evangelist/rael/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
 - Company
-apis: []
+- Retail
+- E-Commerce
+- Consumer Goods
+- Health and Wellness
+- Personal Care
+- Agentic Commerce
+- Model Context Protocol
+- Universal Commerce Protocol
+- Shopify
+apis:
+- aid: rael-ucp-mcp
+  name: Rael UCP Commerce MCP
+  description: 'Rael''s agent-facing commerce interface. The store implements the Universal
+    Commerce Protocol (UCP) 2026-04-08 and exposes it over MCP at
+    https://www.getrael.com/api/ucp/mcp. An anonymous tools/list returns thirteen tools —
+    search_catalog, lookup_catalog, get_product, create/get/update/cancel_cart and
+    create/get/update/complete/cancel_checkout, plus get_order — each with a full JSON
+    Schema inputSchema. Checkout completion requires contemporaneous buyer approval; the
+    endpoint is rate limited per IP and returns Shopify complexity-score headers.'
+  humanURL: https://www.getrael.com/llms.txt
+  baseURL: https://www.getrael.com/api/ucp/mcp
+  tags:
+  - Agentic Commerce
+  - Model Context Protocol
+  - Universal Commerce Protocol
+  - Catalog
+  - Cart
+  - Checkout
+  properties:
+  - type: MCPServer
+    url: mcp/rael-mcp.yml
+  - type: LLMsTxt
+    url: llms/rael-llms.txt
+  - type: ToolCrosswalk
+    url: mcp/rael-tool-crosswalk.yml
+- aid: rael-storefront-graphql
+  name: Rael Storefront GraphQL API
+  description: 'The Shopify Storefront GraphQL API as served on Rael''s own domain, anonymous and
+    fully introspectable. A live IntrospectionQuery returned 422 types with QueryRoot (34 query
+    fields) and Mutation (41 mutations) covering products, collections, search, cart, customer
+    accounts, blog/page content and store metadata. Confirmed to resolve against Rael''s own store:
+    { shop { name primaryDomain { url } } } returns "Rael" / https://www.getrael.com. Rael neither
+    authored nor documents this schema; it is the platform contract exposed on its host, and it is
+    a materially larger surface than the UCP MCP endpoint.'
+  humanURL: https://www.getrael.com/llms.txt
+  baseURL: https://www.getrael.com/api/2024-01/graphql.json
+  tags:
+  - GraphQL
+  - Catalog
+  - Cart
+  - E-Commerce
+  - Shopify
+  properties:
+  - type: GraphQL
+    url: graphql/rael-storefront.graphql
+  - type: GraphQLManifest
+    url: graphql/rael-graphql.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +85,59 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.getrael.com/
+- type: LLMsTxt
+  url: llms/rael-llms.txt
+- type: MCPServer
+  url: mcp/rael-mcp.yml
+- type: WellKnown
+  url: well-known/rael-well-known.yml
+- type: Authentication
+  url: authentication/rael-authentication.yml
+- type: OAuthScopes
+  url: scopes/rael-scopes.yml
+- type: Conformance
+  url: conformance/rael-conformance.yml
+- type: Conventions
+  url: conventions/rael-conventions.yml
+- type: ErrorCatalog
+  url: errors/rael-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/rael-lifecycle.yml
+- type: RateLimits
+  url: rate-limits/rael-rate-limits.yml
+- type: Plans
+  url: plans/rael-plans-pricing.yml
+- type: DataModel
+  url: data-model/rael-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/rael-domain-security.yml
+- type: Support
+  url: https://www.getrael.com/pages/contact-us
+- type: Blog
+  url: https://www.getrael.com/blogs/news
+- type: SignUp
+  url: https://www.getrael.com/account/register
+- type: Login
+  url: https://www.getrael.com/account/login
+- type: TermsOfService
+  url: https://www.getrael.com/policies/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.getrael.com/policies/privacy-policy
+- type: GraphQL
+  url: graphql/rael-storefront.graphql
+- type: ToolCrosswalk
+  url: mcp/rael-tool-crosswalk.yml
+- type: Idempotency
+  url: conventions/rael-conventions.yml
+- type: Packages
+  url: packages/rael-packages.yml
+- type: Documentation
+  url: https://www.getrael.com/agents.md
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v1

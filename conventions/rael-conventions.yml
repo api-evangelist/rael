@@ -1,0 +1,124 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  https://www.getrael.com/llms.txt, https://www.getrael.com/.well-known/ucp, live POST to
+  https://www.getrael.com/api/ucp/mcp (tools/list + error probes), and
+  https://www.getrael.com/policies/refund-policy
+name: Rael API conventions and runtime semantics
+scope: >-
+  Rael's only programmatic surface is the UCP commerce MCP endpoint plus the read-only Shopify
+  storefront JSON routes its own llms.txt documents. There is no REST developer API, so several
+  conventions below are recorded as not-applicable rather than absent.
+transport:
+  protocol: MCP over HTTP (streamable-http), JSON-RPC 2.0
+  endpoint: https://www.getrael.com/api/ucp/mcp
+  content_type: application/json
+  accept: 'application/json, text/event-stream'
+authentication:
+  style: none (anonymous)
+  detail: see authentication/rael-authentication.yml
+  buyer_approval: >-
+    complete_checkout requires contemporaneous buyer approval. llms.txt states agents must not
+    complete payment without explicit buyer consent, and directs agents that cannot obtain it to
+    route through Shop Pay via https://shop.app/SKILL.md instead.
+versioning:
+  style: date-based protocol version
+  current: '2026-04-08'
+  also_supported: ['2026-01-23']
+  signalled_by: 'response header x-shopify-ucp-mcp-api-version'
+  discovery: https://www.getrael.com/.well-known/ucp
+idempotency:
+  supported: true
+  scope: complete_checkout only
+  mechanism: 'meta.idempotency-key (string), REQUIRED on complete_checkout'
+  header: null
+  retention: not published
+  detail: >-
+    The one money-moving operation on the surface, complete_checkout, requires an idempotency key —
+    it is in the tool's inputSchema under meta, described as "An idempotency key for completing the
+    checkout", and it is listed in meta.required alongside ucp-agent, so a call without it is
+    rejected. No other tool takes one: create_cart, update_cart, create_checkout and update_checkout
+    have no idempotency field, and cancel_cart / cancel_checkout are id-scoped and naturally
+    repeatable. Rael publishes no retention window for the key.
+  evidence: >-
+    tools/list 2026-08-26 — complete_checkout.inputSchema.properties.meta.properties["idempotency-key"],
+    with meta.required = ["ucp-agent", "idempotency-key"].
+pagination:
+  style: cursor
+  scope: search_catalog
+  params:
+    cursor: catalog.pagination.cursor (string)
+    limit: catalog.pagination.limit (integer)
+  detail: >-
+    search_catalog accepts a catalog.pagination object with a cursor and a limit. lookup_catalog and
+    get_product are identifier lookups and take no pagination. Rael publishes no default or maximum
+    limit and no response-side cursor field reference; the shape is read from the live inputSchema,
+    not from documentation.
+  evidence: 'tools/list 2026-08-26 — search_catalog.inputSchema.properties.catalog.properties.pagination.'
+  storefront_routes: >-
+    The read-only routes Rael documents in llms.txt (/products.json,
+    /collections/{handle}/products.json) use Shopify''s page/limit query convention, which Rael does
+    not itself document.
+money:
+  representation: >-
+    Integer minor units paired with an ISO 4217 currency code — {"amount": 600, "currency": "USD"}
+    is $6.00. Stated verbatim in the get_checkout tool description returned by tools/list.
+  agent_rule: Convert to major units before quoting a price to a buyer; zero-decimal currencies such as JPY are already whole units.
+buyer_context:
+  fields: [context.address_country, context.currency]
+  detail: 'llms.txt: "Pass context.address_country and context.currency for accurate pricing and availability."'
+request_tracing:
+  header: x-request-id
+  observed: f0283cdc-fd2d-407e-b809-62cc93ee8434-1787771578
+  also: 'server-timing carries requestID, edge, country and processing duration.'
+error_envelope:
+  style: JSON-RPC 2.0 error object with a UCP data envelope
+  shape: '{jsonrpc, id, error: {code, message, data: {code, content, continue_url}}}'
+  detail: see errors/rael-problem-types.yml
+rate_limit_signaling:
+  detail: see rate-limits/rael-rate-limits.yml
+dry_run_mode:
+  supported: false
+  detail: >-
+    No test/sandbox mode, no dry_run flag on any tool, and no test-vs-live key prefixes — the
+    endpoint is anonymous, so there is no key to prefix. create_checkout against the live store is
+    the only way to price an order; it does not charge, but it is a real checkout record.
+reversibility:
+  grade: verified
+  summary: >-
+    Every write surface on the MCP endpoint has an explicit reversal tool, and the one irreversible
+    step — complete_checkout — is gated behind mandatory buyer approval and backed by a
+    provider-stated 30-day return window.
+  surfaces:
+  - write_operation: create_cart / update_cart
+    reversal: cancel_cart
+    reversal_operation_id: cancel_cart
+    window: >-
+      Any time before complete_checkout. Not expressed as a duration by the provider; carts are
+      cancellable while they exist.
+    window_stated: partial
+    source: 'tools/list 2026-08-26 — "Cancels a cart."'
+  - write_operation: create_checkout / update_checkout
+    reversal: cancel_checkout
+    reversal_operation_id: cancel_checkout
+    window: Before complete_checkout. After completion the checkout is an order and cancel_checkout no longer applies.
+    window_stated: true
+    source: 'tools/list 2026-08-26 — "Cancels a checkout." plus the checkout -> order transition in complete_checkout.'
+  - write_operation: complete_checkout
+    reversal: >-
+      No API reversal. The order is reversed out of band through Rael's return process — email
+      support@getrael.com to request a return; accepted returns are refunded as store credit,
+      less the return label cost.
+    reversal_operation_id: null
+    window: 'Within 30 days of purchase; items must be unopened, unused and in original packaging. Sale items and gift cards are non-returnable.'
+    window_stated: true
+    source: https://www.getrael.com/policies/refund-policy
+    note: >-
+      This is the money-moving step and the only one an agent cannot undo programmatically, which
+      is exactly why llms.txt makes buyer approval mandatory here and nowhere else.
+cross_references:
+  errors: errors/rael-problem-types.yml
+  lifecycle: lifecycle/rael-lifecycle.yml
+  authentication: authentication/rael-authentication.yml
+  rate_limits: rate-limits/rael-rate-limits.yml
+  data_model: data-model/rael-data-model.yml

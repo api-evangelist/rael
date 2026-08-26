@@ -1,0 +1,32 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/.well-known/openid-configuration
+name: Rael OAuth / OIDC scopes
+docs: null
+note: >-
+  These four scopes are the scopes_supported list published by the Shopify Customer Accounts
+  authorization server discovered on Rael's own domain. They govern shopper sign-in to Rael's
+  store, not a developer API. Rael publishes no scope reference page of its own; the descriptions
+  below are read from the scope names and the OIDC document's own claims_supported list, and are
+  marked derived where the provider states nothing.
+issuer: https://shopify.com/authentication/22463213
+scope_count: 4
+scopes:
+- name: openid
+  description: Standard OpenID Connect scope; requests an id_token identifying the signed-in shopper.
+  source: scopes_supported
+- name: email
+  description: Releases the email and email_verified claims (both listed in claims_supported).
+  source: scopes_supported
+- name: 'customer-account-api:full'
+  description: Full access to the signed-in shopper's own customer account data (orders, addresses, subscriptions).
+  source: scopes_supported
+  description_method: derived
+- name: 'customer-account-mcp-api:full'
+  description: >-
+    Full access to the customer-account MCP API on behalf of the signed-in shopper. Notable
+    separately from the anonymous storefront commerce MCP endpoint at /api/ucp/mcp — this scope
+    is the authenticated, account-scoped agent surface.
+  source: scopes_supported
+  description_method: derived
+code_challenge_methods_supported: [S256]

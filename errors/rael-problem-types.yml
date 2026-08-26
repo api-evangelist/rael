@@ -1,0 +1,41 @@
+generated: '2026-08-26'
+method: probed
+source: live POST to https://www.getrael.com/api/ucp/mcp
+name: Rael error catalog
+format: jsonrpc2 + UCP data envelope
+rfc9457: false
+note: >-
+  Rael publishes no error reference page. The envelope and the one error class below were observed
+  directly by sending malformed requests to the live endpoint on 2026-08-26. Only errors actually
+  returned are recorded; the JSON-RPC reserved range is NOT listed speculatively.
+envelope:
+  shape: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":{"code":<slug>,"content":<string>,"continue_url":<url>}}}'
+  http_status_on_error: 422
+  note: >-
+    The transport returns HTTP 422 rather than 200 for a JSON-RPC error, so an agent can branch on
+    the status code before parsing. The data.continue_url points a stuck agent at a human-usable
+    store URL.
+errors:
+- code: -32001
+  message: UCP discovery failed
+  data_code: invalid_profile_url
+  http_status: 422
+  observed_content: 'Unable to fetch agent profile: Missing profile uri'
+  continue_url: https://raelbox-com.myshopify.com/
+  cause: >-
+    The request omitted the UCP agent profile URI. Every tool inputSchema makes `meta` required;
+    a bare tools/call without a meta/agent profile is rejected at the protocol layer before the
+    tool runs.
+  remediation: >-
+    Fetch https://www.getrael.com/.well-known/ucp first, then supply the UCP `meta` object
+    (including the agent profile uri) on every tools/call.
+  observed:
+  - request: '{"jsonrpc":"2.0","id":3,"method":"nonexistent/method"}'
+    status: 422
+  - request: '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"get_cart","arguments":{}}}'
+    status: 422
+unknown:
+- note: >-
+    Rate-limit (429) and per-tool validation errors are stated to exist by llms.txt and by the tool
+    schemas respectively, but were not induced — deliberately, to avoid load on a live storefront.
+    Their exact codes are not recorded rather than guessed.

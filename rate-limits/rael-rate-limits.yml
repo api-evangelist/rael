@@ -1,0 +1,39 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/llms.txt + response headers observed on POST https://www.getrael.com/api/ucp/mcp
+name: Rael rate limits
+limit_count: 0
+note: >-
+  Rael states in its own llms.txt that the MCP endpoint is rate limited per IP and that agents must
+  back off on 429, but publishes no numeric limit, window or burst. limit_count is 0 because no
+  quantified limit is published — the policy exists, the number does not.
+policy:
+- scope: per-ip
+  surface: https://www.getrael.com/api/ucp/mcp
+  window: not published
+  limit: not published
+  burst: not published
+  status_on_exhaustion: 429
+  source: 'https://www.getrael.com/llms.txt — "Respect rate limits. The MCP endpoint is rate-limited per IP. Back off on 429 responses."'
+response_headers:
+  standard_ratelimit_headers: false
+  detail: >-
+    No X-RateLimit-*, no RateLimit-* (RFC 9239 draft) and no Retry-After were present on a
+    successful response. The endpoint instead returns a cost/complexity signal, which is the runtime
+    budget signal an agent can actually act on.
+  observed:
+  - header: shopify-complexity-score
+    value: '480'
+    note: Cost of the tools/list call under the legacy complexity scale.
+  - header: shopify-complexity-score-v2
+    value: '48'
+    note: Cost of the same call under the v2 scale.
+  - header: x-shopify-ucp-mcp-api-version
+    value: '2026-04-08'
+  - header: x-request-id
+    value: f0283cdc-fd2d-407e-b809-62cc93ee8434-1787771578
+  probed: '2026-08-26'
+  probe_status: 200
+retry_guidance: >-
+  Back off on 429 (Rael's own instruction). No Retry-After is emitted, so an agent must use its own
+  exponential backoff; the complexity-score headers are the only forward-looking budget signal.

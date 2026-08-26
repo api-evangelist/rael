@@ -1,0 +1,41 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/api/2024-01/graphql.json (full introspection, anonymous)
+name: Rael Storefront GraphQL API
+status: live
+ownership_note: >-
+  Confirmed to be Rael's own store data, not a sibling brand's. An anonymous query
+  { shop { name primaryDomain { url } } } returned {"name":"Rael","primaryDomain":
+  {"url":"https://www.getrael.com"}}. The schema is Shopify's Storefront API — Rael did not author
+  it and does not document it — but it is served from Rael's domain, requires no credential, and
+  resolves against Rael's catalog, carts and content.
+endpoints:
+  unversioned: https://www.getrael.com/api/graphql
+  versioned: https://www.getrael.com/api/2024-01/graphql.json
+introspection:
+  enabled: true
+  authenticated: false
+  probed: '2026-08-26'
+  http_status: 200
+  bytes: 755290
+  types: 422
+schema:
+  query_type: QueryRoot
+  mutation_type: Mutation
+  subscription_type: null
+  query_fields: 34
+  mutation_fields: 41
+  sdl: rael-storefront.graphql
+  introspection_document: rael-storefront-introspection.json
+cost_model:
+  header: null
+  response_extension: 'extensions.cost.requestedQueryCost'
+  observed: 'a two-field shop query cost 2; a __schema queryType probe cost 3'
+  note: Query cost is returned in the response body rather than a header, so an agent can budget after the fact but not before.
+capability_summary:
+  catalog: [product, productByHandle, products, productRecommendations, productTags, productTypes, collection, collections]
+  search: [search, predictiveSearch]
+  cart: [cartCreate, cartLinesAdd, cartLinesUpdate, cartLinesRemove, cartDiscountCodesUpdate, cartBuyerIdentityUpdate, cartSubmitForCompletion, cartPrepareForCompletion]
+  content: [article, articles, blog, blogs, page, pages, menu, metaobject, metaobjects]
+  customer: [customerCreate, customerAccessTokenCreate, customerUpdate, customerAddressCreate, customerRecover]
+  store: [shop, localization, locations, paymentSettings, sitemap, urlRedirects]

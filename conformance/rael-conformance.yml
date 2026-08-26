@@ -1,0 +1,98 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/.well-known/ucp + /.well-known/openid-configuration + POST /api/ucp/mcp
+name: Rael standards conformance
+note: >-
+  Assertions below are read from documents Rael's own host served, not from marketing prose.
+  Rael publishes no compliance program, no certifications and no trust center, so no Compliance
+  or TrustCenter pointer is emitted.
+conformance:
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  evidence: >-
+    POST https://www.getrael.com/api/ucp/mcp with {"jsonrpc":"2.0","id":1,"method":"tools/list"}
+    returned 200 and a valid JSON-RPC 2.0 result containing 13 tools, each with a JSON Schema
+    inputSchema. Response header x-shopify-ucp-mcp-api-version: 2026-04-08.
+- id: jsonrpc2
+  name: JSON-RPC 2.0
+  conforms: true
+  evidence: >-
+    Both success and error responses carry jsonrpc "2.0" and the request id. An unknown method
+    returned {"jsonrpc":"2.0","id":3,"error":{"code":-32001,...}} with HTTP 422.
+- id: oidc
+  name: OpenID Connect Discovery 1.0
+  conforms: true
+  evidence: >-
+    https://www.getrael.com/.well-known/openid-configuration returns 200 with issuer,
+    authorization_endpoint, token_endpoint, jwks_uri, response_types_supported, subject_types_supported
+    and id_token_signing_alg_values_supported. Provider is Shopify, scoped to shop 22463213.
+- id: oauth2
+  name: OAuth 2.0 / RFC 8414 Authorization Server Metadata
+  conforms: true
+  evidence: >-
+    https://www.getrael.com/.well-known/oauth-authorization-server returns 200 with a document
+    byte-identical to the OIDC discovery document. grant_types_supported includes
+    authorization_code, refresh_token and urn:ietf:params:oauth:grant-type:jwt-bearer.
+- id: rfc7636
+  name: OAuth 2.0 PKCE
+  conforms: true
+  evidence: 'code_challenge_methods_supported: ["S256"] in the discovery document.'
+- id: rfc9116
+  name: security.txt
+  conforms: false
+  evidence: 'GET https://www.getrael.com/.well-known/security.txt returned 404.'
+- id: rfc9457
+  name: Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    Errors are JSON-RPC error objects with a UCP data envelope ({code, content, continue_url}),
+    not application/problem+json. See errors/rael-problem-types.yml.
+- id: rfc9727
+  name: RFC 9727 api-catalog
+  conforms: false
+  evidence: 'GET https://www.getrael.com/.well-known/api-catalog returned 404.'
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: 'Both /.well-known/agent-card.json and /.well-known/agent.json returned 404.'
+- id: graphql
+  name: GraphQL (June 2018 spec) with introspection enabled
+  conforms: true
+  evidence: >-
+    POST https://www.getrael.com/api/2024-01/graphql.json with the full IntrospectionQuery returned
+    200 and a 755,290-byte __schema document with 422 types, QueryRoot (34 fields) and Mutation
+    (41 fields), anonymously. A data query { shop { name primaryDomain { url } } } returned
+    {"name":"Rael","primaryDomain":{"url":"https://www.getrael.com"}}, confirming the schema resolves
+    against Rael's own store. SDL saved to graphql/rael-storefront.graphql.
+- id: openapi
+  name: OpenAPI
+  conforms: false
+  evidence: >-
+    /openapi.json, /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs and /redoc all 404
+    on www.getrael.com; no api./developer./docs. subdomain resolves in DNS.
+- id: llmstxt
+  name: llms.txt
+  conforms: true
+  evidence: 'GET https://www.getrael.com/llms.txt returned 200, text/markdown, 4358 bytes, saved verbatim.'
+domain_standards:
+- id: ucp
+  name: Universal Commerce Protocol (UCP) — dev.ucp.shopping
+  market: retail / e-commerce / agentic commerce
+  conforms: true
+  version: '2026-04-08'
+  spec: https://ucp.dev/2026-04-08/specification/overview/
+  evidence: >-
+    The contract itself declares it. https://www.getrael.com/.well-known/ucp returns a UCP
+    merchant profile with ucp.version "2026-04-08", supported_versions {2026-04-08, 2026-01-23},
+    a dev.ucp.shopping service bound to transport "mcp" at endpoint
+    https://raelbox-com.myshopify.com/api/ucp/mcp, and named capabilities
+    dev.ucp.shopping.catalog.search, .catalog.lookup, .cart, .checkout, .fulfillment, .discount
+    and .order, plus the dev.shopify.catalog extension. Payment handlers com.google.pay,
+    dev.shopify.card and dev.shopify.shop_pay are declared with per-handler config.
+  spec_location: /.well-known/ucp -> ucp.services["dev.ucp.shopping"][0]
+  note: >-
+    Rael did not author the UCP implementation — Shopify ships it for every store — but the
+    profile is served from Rael's host, names Rael as the Google Pay merchant (merchant_name
+    "Rael", merchant_origin www.getrael.com) and is scoped to Rael's catalog, so an agent that
+    already speaks UCP integrates with Rael with no bespoke connector.

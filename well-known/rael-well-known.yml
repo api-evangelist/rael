@@ -1,0 +1,59 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/.well-known/
+name: Rael well-known documents
+note: >-
+  Probed every /.well-known/ path in the enrichment contract against the single host Rael
+  operates, www.getrael.com. Three paths returned real documents. The two OAuth/OIDC
+  documents are Shopify Customer Accounts discovery for Rael's shop (shop id 22463213) —
+  they are served from Rael's own domain but the issuer is https://shopify.com/authentication/22463213,
+  so the authorization server is Shopify's, scoped to Rael's store. /.well-known/ucp is the
+  store's Universal Commerce Protocol merchant profile and names Rael's own MCP endpoint and
+  Google Pay merchant record (merchant_name "Rael", merchant_origin www.getrael.com).
+  security.txt, api-catalog, ai-plugin.json, agent-card.json and agent.json all 404 with a
+  real Shopify 404 body — no SecurityTxt and no AgentCard pointer is emitted.
+hosts:
+- host: www.getrael.com
+  documents:
+  - path: /.well-known/ucp
+    status: 200
+    content_type: application/json
+    file: rael-ucp.json
+    note: UCP merchant profile, version 2026-04-08 (also supports 2026-01-23).
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: rael-openid-configuration.json
+    note: Shopify Customer Accounts OIDC discovery, issuer https://shopify.com/authentication/22463213.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: rael-oauth-authorization-server.json
+    note: Byte-identical to the openid-configuration document (RFC 8414 alias).
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+other_agent_documents:
+- path: /llms.txt
+  status: 200
+  content_type: text/markdown
+  file: ../llms/rael-llms.txt
+- path: /agents.md
+  status: 200
+  content_type: text/markdown
+  note: Rael's llms.txt states agents.md is the canonical agent-facing description and llms.txt mirrors it.
+- path: /robots.txt
+  status: 200
+  content_type: text/plain

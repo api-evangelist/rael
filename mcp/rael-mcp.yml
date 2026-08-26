@@ -1,0 +1,123 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/api/ucp/mcp
+name: Rael UCP Commerce MCP Server
+status: live
+description: >-
+  Rael's storefront exposes a live, anonymous MCP server implementing the Universal Commerce
+  Protocol (UCP) shopping service. An unauthenticated POST of {"jsonrpc":"2.0","id":1,
+  "method":"tools/list"} returned HTTP 200 with 13 tools, each carrying a complete JSON Schema
+  inputSchema — no OAuth challenge, no API key. The saved manifest in rael-mcp-tools.json is
+  the verbatim response body.
+ownership_note: >-
+  The endpoint is served from Rael's own domain (www.getrael.com) and its catalog, cart and
+  order tools operate on Rael's store only. The server software is Shopify's — Shopify ships
+  UCP natively for every store, the /.well-known/ucp profile advertises the canonical form of
+  the endpoint on the shop's myshopify alias (raelbox-com.myshopify.com/api/ucp/mcp), and the
+  response carries powered-by: Shopify. This is the templated/platform-hosted case: the
+  contract is real, live and scoped to Rael, but Rael did not author the tool schemas.
+deployment:
+  mode: remote
+  endpoint: https://www.getrael.com/api/ucp/mcp
+  alternate_endpoint: https://raelbox-com.myshopify.com/api/ucp/mcp
+  install: null
+  package: null
+  auth: none
+  verified: probed
+transport: streamable-http
+protocol:
+  name: Universal Commerce Protocol
+  service: dev.ucp.shopping
+  version: '2026-04-08'
+  supported_versions:
+  - '2026-04-08'
+  - '2026-01-23'
+  discovery: https://www.getrael.com/.well-known/ucp
+  spec: https://ucp.dev/2026-04-08/specification/overview/
+  schema: https://ucp.dev/2026-04-08/services/shopping/mcp.openrpc.json
+  response_header: 'x-shopify-ucp-mcp-api-version: 2026-04-08'
+x-evidence:
+  fetched: '2026-08-26'
+  url: https://www.getrael.com/api/ucp/mcp
+  method: POST
+  request: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  bytes: 52007
+  tool_count: 13
+  auth_challenge: none
+tools:
+- name: search_catalog
+  category: catalog
+  description: Search for products from the online store, hosted on Shopify.
+  required: [meta, catalog]
+- name: lookup_catalog
+  category: catalog
+  description: Look up multiple products or variants by identifier.
+  required: [meta, catalog]
+- name: get_product
+  category: catalog
+  description: Retrieve complete product detail by identifier. Returns a singular product.
+  required: [meta, catalog]
+- name: create_cart
+  category: cart
+  description: Creates a new cart.
+  required: [meta, cart]
+- name: get_cart
+  category: cart
+  description: Get the cart contents.
+  required: [meta, id]
+- name: update_cart
+  category: cart
+  description: Perform updates to a cart.
+  required: [meta, cart, id]
+- name: cancel_cart
+  category: cart
+  description: Cancels a cart.
+  required: [meta, id]
+- name: create_checkout
+  category: checkout
+  description: Creates a checkout. Returns checkout details, including line items, totals, discounts and taxes.
+  required: [meta, checkout]
+- name: get_checkout
+  category: checkout
+  description: Returns details about the checkout, including line items, totals, discounts and taxes.
+  required: [meta, id]
+- name: update_checkout
+  category: checkout
+  description: Updates a checkout. Returns checkout details.
+  required: [meta, checkout, id]
+- name: complete_checkout
+  category: checkout
+  description: Completes a checkout. Returns order ID, Thank You Page URL, or errors. Requires buyer approval.
+  required: [meta, id, checkout]
+- name: cancel_checkout
+  category: checkout
+  description: Cancels a checkout.
+  required: [meta, id]
+- name: get_order
+  category: order
+  description: Get the details of an order.
+  required: [meta, id]
+capabilities_declared:
+- dev.ucp.shopping.catalog.search
+- dev.ucp.shopping.catalog.lookup
+- dev.ucp.shopping.cart
+- dev.ucp.shopping.checkout
+- dev.ucp.shopping.fulfillment
+- dev.ucp.shopping.discount
+- dev.ucp.shopping.order
+- dev.shopify.catalog
+payment_handlers_declared:
+- com.google.pay
+- dev.shopify.card
+- dev.shopify.shop_pay
+constraints:
+- Checkout completion requires contemporaneous buyer approval; agents must not complete payment
+  without explicit buyer consent (stated in https://www.getrael.com/llms.txt).
+- The endpoint is rate limited per IP; back off on 429 (stated in llms.txt).
+- Prices are integers in ISO 4217 minor units paired with a currency code (stated in the tool
+  descriptions returned by tools/list).
+- Agents should pass context.address_country and context.currency for accurate pricing.
+files:
+  manifest: rael-mcp-tools.json

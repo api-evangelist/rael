@@ -1,0 +1,127 @@
+generated: '2026-08-26'
+method: derived
+source: mcp/rael-mcp-tools.json + graphql/rael-storefront.graphql (both probed live 2026-08-26)
+name: Rael MCP-to-GraphQL tool crosswalk
+note: >-
+  Rael publishes no OpenAPI, so the usual REST leg of this crosswalk is empty. What it does publish
+  are TWO anonymous machine-readable contracts on the same host that are overlapping but not
+  identical projections of the same store — the UCP commerce MCP endpoint (13 tools) and the Shopify
+  Storefront GraphQL API (34 queries, 41 mutations). Bindings below are by name and semantics against
+  the real SDL; neither contract cross-references the other, so no binding is asserted above medium
+  confidence unless the operation names and argument shapes line up exactly.
+surfaces:
+  openapi: null
+  graphql:
+    endpoint: https://www.getrael.com/api/2024-01/graphql.json
+    gated: false
+    sdl: graphql/rael-storefront.graphql
+  mcp:
+    endpoint: https://www.getrael.com/api/ucp/mcp
+    gated: false
+    manifest: mcp/rael-mcp-tools.json
+crosswalk:
+- tool: get_product
+  category: catalog
+  graphql: [QueryRoot.product, QueryRoot.productByHandle]
+  rest: []
+  binding: direct
+  confidence: high
+- tool: search_catalog
+  category: catalog
+  graphql: [QueryRoot.search, QueryRoot.predictiveSearch, QueryRoot.products]
+  rest: []
+  binding: direct
+  confidence: high
+  note: MCP exposes one search tool; GraphQL splits full search, predictive search and a filtered product connection.
+- tool: lookup_catalog
+  category: catalog
+  graphql: [QueryRoot.nodes, QueryRoot.products]
+  rest: []
+  binding: composite
+  confidence: medium
+  note: Bulk identifier resolution has no single GraphQL field; nodes(ids:) is the closest equivalent.
+- tool: create_cart
+  category: cart
+  graphql: [Mutation.cartCreate]
+  rest: []
+  binding: direct
+  confidence: high
+- tool: get_cart
+  category: cart
+  graphql: [QueryRoot.cart]
+  rest: []
+  binding: direct
+  confidence: high
+- tool: update_cart
+  category: cart
+  graphql: [Mutation.cartLinesAdd, Mutation.cartLinesUpdate, Mutation.cartLinesRemove, Mutation.cartBuyerIdentityUpdate, Mutation.cartAttributesUpdate, Mutation.cartNoteUpdate]
+  rest: []
+  binding: composite
+  confidence: high
+  note: One MCP tool collapses six GraphQL mutations. The MCP surface is coarser by design.
+- tool: create_checkout
+  category: checkout
+  graphql: [Mutation.cartCreate, Mutation.cartPrepareForCompletion]
+  rest: []
+  binding: composite
+  confidence: medium
+  note: >-
+    The Storefront API has no Checkout object — it was superseded by Cart. UCP keeps checkout as a
+    distinct resource, so the MCP checkout tools map onto cart mutations plus the completion
+    sub-flow rather than onto a checkout type.
+- tool: get_checkout
+  category: checkout
+  graphql: [QueryRoot.cart, QueryRoot.cartCompletionAttempt]
+  rest: []
+  binding: composite
+  confidence: medium
+- tool: update_checkout
+  category: checkout
+  graphql: [Mutation.cartDeliveryAddressesUpdate, Mutation.cartSelectedDeliveryOptionsUpdate, Mutation.cartPaymentUpdate, Mutation.cartDiscountCodesUpdate, Mutation.cartBillingAddressUpdate]
+  rest: []
+  binding: composite
+  confidence: medium
+- tool: complete_checkout
+  category: checkout
+  graphql: [Mutation.cartSubmitForCompletion]
+  rest: []
+  binding: direct
+  confidence: high
+  note: >-
+    Both require the same discipline. The MCP tool makes meta.idempotency-key REQUIRED;
+    cartSubmitForCompletion takes an attemptId that serves the same purpose.
+mcp_only:
+- tool: cancel_cart
+  reason: >-
+    No cart-deletion mutation exists in the Storefront schema. A GraphQL consumer abandons a cart by
+    dropping the cart id; the MCP surface exposes an explicit cancel. This is a real reversibility
+    capability that only the agent surface has.
+- tool: cancel_checkout
+  reason: Same as cancel_cart — no Checkout type and no cancellation mutation in the Storefront schema.
+- tool: get_order
+  reason: >-
+    The Storefront API has no anonymous order query. Order reads there require a customer access
+    token (customerAccessTokenCreate) or the Customer Account API. The MCP tool reads an order by
+    'gid://shopify/Order/…' as part of the agent flow.
+graphql_only:
+- fields: [QueryRoot.article, QueryRoot.articles, QueryRoot.blog, QueryRoot.blogs, QueryRoot.page, QueryRoot.pages, QueryRoot.menu, QueryRoot.metaobject, QueryRoot.metaobjects]
+  reason: Editorial and CMS content. Rael runs a blog at /blogs/news; none of it is reachable from the commerce MCP surface.
+- fields: [QueryRoot.productRecommendations, QueryRoot.productTags, QueryRoot.productTypes, QueryRoot.collection, QueryRoot.collections]
+  reason: Merchandising and taxonomy. MCP has search and lookup but no collection browse and no recommendations.
+- fields: [QueryRoot.localization, QueryRoot.locations, QueryRoot.paymentSettings, QueryRoot.shop, QueryRoot.sitemap, QueryRoot.urlRedirects]
+  reason: Store metadata. MCP carries locale and currency as request context hints only, never as queryable facts.
+- fields: [Mutation.customerCreate, Mutation.customerAccessTokenCreate, Mutation.customerUpdate, Mutation.customerAddressCreate, Mutation.customerRecover, Mutation.customerReset, Mutation.customerActivate]
+  reason: Account lifecycle. The MCP surface is deliberately account-free — it transacts for a buyer without creating one.
+- fields: [Mutation.cartGiftCardCodesAdd, Mutation.cartGiftCardCodesRemove, Mutation.cartGiftCardCodesUpdate, Mutation.cartMetafieldsSet, Mutation.cartMetafieldDelete, Mutation.cartClone, Mutation.cartRemovePersonalData]
+  reason: Gift cards, cart metafields, cloning and personal-data removal have no MCP tool.
+- fields: [Mutation.shopPayPaymentRequestSessionCreate, Mutation.shopPayPaymentRequestSessionSubmit]
+  reason: Shop Pay session handling. UCP routes this through declared payment handlers instead.
+rest_only: []
+coverage:
+  mcp_tools: 13
+  mcp_tools_bound_to_graphql: 10
+  mcp_only: 3
+  graphql_query_fields: 34
+  graphql_mutation_fields: 41
+  graphql_fields_reachable_from_mcp: 22
+  openapi_operations: 0

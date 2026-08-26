@@ -1,0 +1,113 @@
+generated: '2026-08-26'
+method: derived
+source: mcp/rael-mcp-tools.json (verbatim tools/list response from https://www.getrael.com/api/ucp/mcp)
+name: Rael commerce data model
+note: >-
+  Derived strictly from the JSON Schema inputSchemas returned by the live tools/list call. Only
+  fields and relationships that appear in those schemas are recorded; response shapes were not
+  probed (that would require creating real carts and checkouts against a live storefront), so this
+  graph describes the write/lookup side of the model, not every returned field.
+id_scheme:
+  format: Shopify GID
+  examples:
+  - 'gid://shopify/Order/123'
+  - 'gid://shopify/Checkout/abc123'
+  source: 'get_order.id and complete_checkout.id descriptions in tools/list.'
+entities:
+- name: Product
+  described_by: [get_product, lookup_catalog, search_catalog]
+  key: catalog.id (Product ID)
+  fields:
+  - catalog.id
+  - catalog.selected[] (variant options — name, label)
+  - catalog.preferences[]
+- name: ProductVariant
+  described_by: [create_cart, update_cart, create_checkout]
+  key: line_items[].item.id ("The Product Variant ID to add or update")
+- name: Cart
+  described_by: [create_cart, get_cart, update_cart, cancel_cart]
+  key: id
+  fields:
+  - cart.line_items[] (id, quantity, item.id)
+  - cart.buyer (email, phone_number)
+  - cart.context (address_country, address_region, postal_code, intent, language, currency, eligibility[])
+- name: Checkout
+  described_by: [create_checkout, get_checkout, update_checkout, complete_checkout, cancel_checkout]
+  key: id ('gid://shopify/Checkout/…')
+  fields:
+  - checkout.cart_id
+  - checkout.line_items[]
+  - checkout.buyer
+  - checkout.context
+  - checkout.payment.instruments[]
+  - checkout.fulfillment.methods[]
+  - checkout.discounts.codes[]
+  - checkout.attribution
+- name: Order
+  described_by: [get_order, complete_checkout]
+  key: id ('gid://shopify/Order/123')
+  note: Created by complete_checkout, which returns an order ID and a Thank You Page URL.
+- name: Buyer
+  described_by: [create_cart, create_checkout]
+  fields: [email, phone_number]
+- name: PaymentInstrument
+  described_by: [create_checkout, update_checkout, complete_checkout]
+  fields: [id, handler_id, type, billing_address, credential, display, selected]
+  handlers: [com.google.pay, dev.shopify.card, dev.shopify.shop_pay]
+- name: FulfillmentMethod
+  described_by: [create_checkout, update_checkout]
+  fields: ["type", "line_item_ids[]", "selected_destination_id", "destinations[]", "groups[]"]
+- name: Discount
+  described_by: [create_checkout, update_checkout]
+  fields: ["codes[]"]
+  note: 'Codes are case-insensitive and each submission REPLACES previously submitted codes.'
+- name: AgentProfile
+  described_by: all 13 tools
+  key: meta.ucp-agent.profile (URI)
+  note: >-
+    The calling agent itself is a first-class entity in this model — every tool requires a UCP agent
+    profile URI, and omitting it is the one error the live endpoint actually returned
+    (-32001 invalid_profile_url).
+relationships:
+- from: Cart
+  to: ProductVariant
+  type: has_many
+  via: cart.line_items[].item.id
+- from: Checkout
+  to: Cart
+  type: belongs_to
+  via: checkout.cart_id
+  note: '"Cart ID to convert to checkout. When provided, the business uses cart contents."'
+- from: Checkout
+  to: ProductVariant
+  type: has_many
+  via: checkout.line_items[].item.id
+- from: Checkout
+  to: Buyer
+  type: has_one
+  via: checkout.buyer
+- from: Checkout
+  to: PaymentInstrument
+  type: has_many
+  via: checkout.payment.instruments[]
+- from: Checkout
+  to: FulfillmentMethod
+  type: has_many
+  via: checkout.fulfillment.methods[]
+- from: FulfillmentMethod
+  to: Checkout
+  type: has_many
+  via: fulfillment.methods[].line_item_ids[] -> checkout.line_items[].id
+- from: Checkout
+  to: Discount
+  type: has_one
+  via: checkout.discounts.codes[]
+- from: Order
+  to: Checkout
+  type: belongs_to
+  via: complete_checkout(id) -> order id
+- from: ProductVariant
+  to: Product
+  type: belongs_to
+  via: catalog.selected[] variant options on get_product
+lifecycle_path: Product -> ProductVariant -> Cart -> Checkout -> Order

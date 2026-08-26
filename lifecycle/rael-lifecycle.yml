@@ -1,0 +1,41 @@
+generated: '2026-08-26'
+method: probed
+source: https://www.getrael.com/.well-known/ucp + response headers from https://www.getrael.com/api/ucp/mcp
+name: Rael API lifecycle
+versioning:
+  scheme: date-based protocol version (UCP)
+  current: '2026-04-08'
+  supported:
+  - version: '2026-04-08'
+    status: latest stable
+    profile: https://raelbox-com.myshopify.com/.well-known/ucp/2026-04-08
+  - version: '2026-01-23'
+    status: supported
+    profile: https://raelbox-com.myshopify.com/.well-known/ucp/2026-01-23
+  negotiation: >-
+    Version is discovered from /.well-known/ucp and echoed on every response as
+    x-shopify-ucp-mcp-api-version. Rael does not publish a version-selection parameter of its own.
+  note: >-
+    The version is the UCP protocol version, set by the protocol and by Shopify's implementation of
+    it — not a Rael-owned API version. Rael has no API of its own to version.
+deprecation_policy:
+  published: false
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    No RFC 8594 Sunset or Deprecation headers were returned, and Rael publishes no deprecation or
+    breaking-change policy. The only signal that an older interface is on its way out is the
+    supported_versions map in the UCP profile, which currently carries one prior version.
+status_page:
+  published: false
+  detail: >-
+    Rael runs no status page. The storefront's underlying platform reports at status.shopify.com,
+    which is Shopify's page, not Rael's, so no StatusPage pointer is emitted.
+sla:
+  published: false
+changelog:
+  published: false
+  detail: >-
+    No dated changelog for the commerce interface. UCP version history is published by the protocol
+    at https://ucp.dev, not by Rael.
+deprecated_operations: []

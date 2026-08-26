@@ -1,0 +1,28 @@
+generated: '2026-08-26'
+method: searched
+source: https://www.getrael.com/llms.txt + https://www.getrael.com/
+name: Rael API plans and pricing
+plan_count: 0
+note: >-
+  Rael sells consumer goods, not API access. There is no developer plan, no free/paid tier, no
+  metered API pricing and no "contact sales" API tier — the UCP commerce MCP endpoint at
+  /api/ucp/mcp is anonymous and free to call, because its purpose is to sell product, and the money
+  changes hands at complete_checkout on the retail price of physical goods. Product pricing lives on
+  the storefront and in the catalog tools (search_catalog, get_product), quoted in ISO 4217 minor
+  units. plan_count is 0 as a statement of fact about the API surface, not a gap in this profile.
+plans: []
+commercial_model:
+  type: retail-transaction
+  currency_representation: integer minor units + ISO 4217 currency code
+  payment_handlers:
+  - com.google.pay
+  - dev.shopify.card
+  - dev.shopify.shop_pay
+  buyer_approval_required: true
+  source: https://www.getrael.com/.well-known/ucp
+retail_channels:
+- getrael.com
+- Target
+- Amazon
+- Walmart
+- Thrive Market

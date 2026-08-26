@@ -1,0 +1,39 @@
+generated: '2026-08-26'
+method: searched
+source: registry.npmjs.org, pypi.org, api.github.com, and https://www.getrael.com/llms.txt
+name: Rael client packages and SDKs
+package_count: 0
+official_count: 0
+note: >-
+  Rael publishes no client libraries. Searched npm (registry.npmjs.org search for "rael" — the two
+  hits, rael-ui@0.6.0 and rael@1.1.6, are unrelated third-party projects; rael@1.1.6 points at
+  github.com/teressa25/rael), PyPI (pypi.org/pypi/rael/json -> 404), and the GitHub organization
+  search (58 login matches for "rael", none belonging to getrael.com — raelize, Rael-courses,
+  RAEL-Berkeley and the rest are unrelated). Rael's own llms.txt names no SDK; the only client it
+  recommends is Shopify's cross-store Shop skill at https://shop.app/SKILL.md, which is Shopify's
+  package, not Rael's. No SDKs pointer is emitted in apis.yml, because there is no first-party SDK
+  to point at.
+packages: []
+searched_registries:
+- registry: npm
+  endpoint: https://registry.npmjs.org/-/v1/search?text=rael
+  first_party_hits: 0
+- registry: pypi
+  endpoint: https://pypi.org/pypi/rael/json
+  status: 404
+  first_party_hits: 0
+- registry: github
+  endpoint: https://api.github.com/search/users?q=rael+in:login+type:org
+  first_party_hits: 0
+third_party_clients:
+- name: Shop skill
+  url: https://shop.app/SKILL.md
+  owner: Shopify
+  official: false
+  registry: null
+  version: null
+  published: null
+  note: >-
+    Recommended by Rael's own llms.txt for personal shopping agents. Distributed as a markdown skill
+    at a fixed unpinned URL with no registry and no version metadata — a consumer cannot tell which
+    revision they fetched. Works across every Shopify store; it is not Rael-specific.
