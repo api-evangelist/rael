@@ -12,6 +12,17 @@ description: 'Rael is a holistic personal-care brand founded in 2017 by three Ko
   checkout completion. The second is the Shopify Storefront GraphQL API at /api/graphql, fully
   introspectable without a credential — 422 types, 34 queries and 41 mutations resolving against
   Rael''s own catalog.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.getrael.com/cdn/shop/files/Rael_Logo_Forest-Green.png?height=628&pad_color=fff&v=1682534336&width=1200
 url: https://raw.githubusercontent.com/api-evangelist/rael/refs/heads/main/apis.yml
 x-type: company
