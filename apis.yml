@@ -38,6 +38,17 @@ tags:
 - Health and Wellness
 - Personal Care
 - Agentic Commerce
+- MCP
+- Universal Commerce Protocol
+- Shopify
+tags_raw:
+- Company
+- Retail
+- E-Commerce
+- Consumer Goods
+- Health and Wellness
+- Personal Care
+- Agentic Commerce
 - Model Context Protocol
 - Universal Commerce Protocol
 - Shopify
@@ -54,6 +65,13 @@ apis:
   humanURL: https://www.getrael.com/llms.txt
   baseURL: https://www.getrael.com/api/ucp/mcp
   tags:
+  - Agentic Commerce
+  - MCP
+  - Universal Commerce Protocol
+  - Catalog
+  - Cart
+  - Checkout
+  tags_raw:
   - Agentic Commerce
   - Model Context Protocol
   - Universal Commerce Protocol
