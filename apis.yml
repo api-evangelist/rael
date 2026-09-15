@@ -1,17 +1,16 @@
 aid: rael
 name: Rael
-description: 'Rael is a holistic personal-care brand founded in 2017 by three Korean-American
-  women and led by co-founder and CEO Yanghee Paik, selling organic-cotton period care, intimate
-  care, skincare and cycle supplements direct to consumers at getrael.com and through Target,
-  Amazon, Walmart and Thrive Market. Rael runs no developer program, publishes no OpenAPI and ships
-  no SDK — but its storefront serves two live, anonymous, machine-readable contracts on its own
-  domain. The first is an agentic commerce surface Rael documents itself: a hand-written llms.txt
-  and agents.md, a Universal Commerce Protocol merchant profile at /.well-known/ucp declaring UCP
-  2026-04-08, and an MCP endpoint at /api/ucp/mcp that answers tools/list with thirteen catalog,
-  cart, checkout and order tools carrying full JSON Schema inputs and a required idempotency key on
-  checkout completion. The second is the Shopify Storefront GraphQL API at /api/graphql, fully
-  introspectable without a credential — 422 types, 34 queries and 41 mutations resolving against
-  Rael''s own catalog.'
+description: 'Rael is a holistic personal-care brand founded in 2017 by three Korean-American women and
+  led by co-founder and CEO Yanghee Paik, selling organic-cotton period care, intimate care, skincare
+  and cycle supplements direct to consumers at getrael.com and through Target, Amazon, Walmart and Thrive
+  Market. Rael runs no developer program, publishes no OpenAPI and ships no SDK — but its storefront serves
+  two live, anonymous, machine-readable contracts on its own domain. The first is an agentic commerce
+  surface Rael documents itself: a hand-written llms.txt and agents.md, a Universal Commerce Protocol
+  merchant profile at /.well-known/ucp declaring UCP 2026-04-08, and an MCP endpoint at /api/ucp/mcp that
+  answers tools/list with thirteen catalog, cart, checkout and order tools carrying full JSON Schema inputs
+  and a required idempotency key on checkout completion. The second is the Shopify Storefront GraphQL
+  API at /api/graphql, fully introspectable without a credential — 422 types, 34 queries and 41 mutations
+  resolving against Rael''s own catalog.'
 deliveryModel:
   model: saas
   open_source: false
@@ -68,15 +67,14 @@ tags_raw:
 - Universal Commerce Protocol
 - Shopify
 apis:
-- aid: rael-ucp-mcp
+- aid: rael:rael-ucp-mcp
   name: Rael UCP Commerce MCP
-  description: 'Rael''s agent-facing commerce interface. The store implements the Universal
-    Commerce Protocol (UCP) 2026-04-08 and exposes it over MCP at
-    https://www.getrael.com/api/ucp/mcp. An anonymous tools/list returns thirteen tools —
-    search_catalog, lookup_catalog, get_product, create/get/update/cancel_cart and
-    create/get/update/complete/cancel_checkout, plus get_order — each with a full JSON
-    Schema inputSchema. Checkout completion requires contemporaneous buyer approval; the
-    endpoint is rate limited per IP and returns Shopify complexity-score headers.'
+  description: Rael's agent-facing commerce interface. The store implements the Universal Commerce Protocol
+    (UCP) 2026-04-08 and exposes it over MCP at https://www.getrael.com/api/ucp/mcp. An anonymous tools/list
+    returns thirteen tools — search_catalog, lookup_catalog, get_product, create/get/update/cancel_cart
+    and create/get/update/complete/cancel_checkout, plus get_order — each with a full JSON Schema inputSchema.
+    Checkout completion requires contemporaneous buyer approval; the endpoint is rate limited per IP and
+    returns Shopify complexity-score headers.
   humanURL: https://www.getrael.com/llms.txt
   baseURL: https://www.getrael.com/api/ucp/mcp
   tags:
@@ -100,15 +98,15 @@ apis:
     url: llms/rael-llms.txt
   - type: ToolCrosswalk
     url: mcp/rael-tool-crosswalk.yml
-- aid: rael-storefront-graphql
+- aid: rael:rael-storefront-graphql
   name: Rael Storefront GraphQL API
-  description: 'The Shopify Storefront GraphQL API as served on Rael''s own domain, anonymous and
-    fully introspectable. A live IntrospectionQuery returned 422 types with QueryRoot (34 query
-    fields) and Mutation (41 mutations) covering products, collections, search, cart, customer
-    accounts, blog/page content and store metadata. Confirmed to resolve against Rael''s own store:
-    { shop { name primaryDomain { url } } } returns "Rael" / https://www.getrael.com. Rael neither
-    authored nor documents this schema; it is the platform contract exposed on its host, and it is
-    a materially larger surface than the UCP MCP endpoint.'
+  description: 'The Shopify Storefront GraphQL API as served on Rael''s own domain, anonymous and fully
+    introspectable. A live IntrospectionQuery returned 422 types with QueryRoot (34 query fields) and
+    Mutation (41 mutations) covering products, collections, search, cart, customer accounts, blog/page
+    content and store metadata. Confirmed to resolve against Rael''s own store: { shop { name primaryDomain
+    { url } } } returns "Rael" / https://www.getrael.com. Rael neither authored nor documents this schema;
+    it is the platform contract exposed on its host, and it is a materially larger surface than the UCP
+    MCP endpoint.'
   humanURL: https://www.getrael.com/llms.txt
   baseURL: https://www.getrael.com/api/2024-01/graphql.json
   tags:
