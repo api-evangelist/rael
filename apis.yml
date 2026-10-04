@@ -98,6 +98,9 @@ apis:
     url: llms/rael-llms.txt
   - type: ToolCrosswalk
     url: mcp/rael-tool-crosswalk.yml
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 - aid: rael:rael-storefront-graphql
   name: Rael Storefront GraphQL API
   description: 'The Shopify Storefront GraphQL API as served on Rael''s own domain, anonymous and fully
@@ -120,6 +123,9 @@ apis:
     url: graphql/rael-storefront.graphql
   - type: GraphQLManifest
     url: graphql/rael-graphql.yml
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-graphql
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
