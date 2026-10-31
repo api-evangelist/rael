@@ -64,18 +64,117 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Rael is a holistic personal-care brand founded in 2017 by three Korean-American women and led by
-co-founder and CEO Yanghee Paik, selling organic-cotton period care, intimate care, skincare and
-cycle supplements direct to consumers and through Target, Amazon, Walmart and Thrive Market.
+Rael is a holistic personal-care brand founded in 2017 by three Korean-American women and led by co-founder and CEO Yanghee Paik, selling organic-cotton period care, intimate care, skincare and cycle supplements direct to consumers at getrael.com and through Target, Amazon, Walmart and Thrive Market. Rael runs no developer program, publishes no OpenAPI and ships no SDK — but its storefront serves two live, anonymous, machine-readable contracts on its own domain. The first is an agentic commerce surface Rael documents itself: a hand-written llms.txt and agents.md, a Universal Commerce Protocol merchant profile at /.well-known/ucp declaring UCP 2026-04-08, and an MCP endpoint at /api/ucp/mcp that answers tools/list with thirteen catalog, cart, checkout and order tools carrying full JSON Schema inputs and a required idempotency key on checkout completion. The second is the Shopify Storefront GraphQL API at /api/graphql, fully introspectable without a credential — 422 types, 34 queries and 41 mutations resolving against Rael's own catalog.
 
-Rael runs no developer program and publishes no OpenAPI or SDK. It does serve two live, anonymous,
-machine-readable contracts from its own domain:
+**Areas:** Company · Retail · E-Commerce · Consumer Goods · Health and Wellness · Personal Care · Agentic Commerce · MCP · Universal Commerce Protocol · Shopify
 
-- **UCP commerce MCP** — `https://www.getrael.com/api/ucp/mcp`, discovered via
-  `/.well-known/ucp` (Universal Commerce Protocol 2026-04-08) and documented by Rael's own
-  `/llms.txt` and `/agents.md`. An unauthenticated `tools/list` returns 13 catalog, cart, checkout
-  and order tools with full JSON Schema inputs.
-- **Shopify Storefront GraphQL** — `https://www.getrael.com/api/graphql`, fully introspectable
-  without a credential (422 types, 34 queries, 41 mutations) and resolving against Rael's own store.
+## Rael on APIs.io
 
-- https://www.getrael.com/
+Everything profiled for Rael is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/rael/](https://apis.io/providers/rael/)** — or go straight to one of the APIs or properties below.
+
+### APIs (2)
+
+- [Rael UCP Commerce MCP](https://apis.io/apis/rael/rael-ucp-mcp/) — Rael's agent-facing commerce interface. The store implements the Universal Commerce Protocol (UCP) 2026-04-08 and exposes it over MCP at…
+- [Rael Storefront GraphQL API](https://apis.io/apis/rael/rael-storefront-graphql/) — The Shopify Storefront GraphQL API as served on Rael's own domain, anonymous and fully introspectable. A live IntrospectionQuery returned 422 types with…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Rael UCP Commerce MCP Server](https://apis.io/servers/rael/rael-ucp-commerce-mcp-server/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Rael Authentication](https://apis.io/security/rael/rael-authentication/)
+- [Rael Domain Security](https://apis.io/security/rael/rael-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Rael Scopes](https://apis.io/scopes/rael/rael-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Rael Plans Pricing](https://apis.io/plans/rael/rael-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Rael Rate Limits](https://apis.io/rate-limits/rael/rael-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.getrael.com/)
+- [Documentation](https://www.getrael.com/agents.md)
+- [Sign up](https://www.getrael.com/account/register)
+- [Support](https://www.getrael.com/pages/contact-us)
+- [Blog](https://www.getrael.com/blogs/news)
+- [Terms of service](https://www.getrael.com/policies/terms-of-service)
+- [Privacy policy](https://www.getrael.com/policies/privacy-policy)
+
+## API Evangelist rating
+
+**Kin Score 28.3** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 10.4 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 30.4 |
+| Access clarity | 34.2 |
+
+**Agent readiness 36.3** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | platform (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | platform (partial credit) |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 32.8** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/rael/](https://apis.io/providers/rael/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Rael: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/rael/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
